@@ -1,0 +1,15 @@
+# Credenciales y configuración local con posibles secretos
+.env
+.env.*
+!.env.example
+.codex/config.toml
+.mcp.json
+
+# Dependencias y cachés locales
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+.DS_Store
