@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { siteAsset } from "@/lib/site-asset";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -8,7 +9,7 @@ export default function Header() {
     <header className="site-header">
       <div className="header-inner">
         <a className="brand" href="#inicio" aria-label="PV Metals Company, inicio" onClick={() => setOpen(false)}>
-          <span className="brand-mark" aria-hidden="true">PV<span className="brand-spark">◆</span></span>
+          <span className="brand-isotype" aria-hidden="true" style={{ backgroundImage: `url("${siteAsset("/images/pv-isotype-color-dark.svg")}")` }} />
           <span className="brand-name">METALS<br />COMPANY</span>
         </a>
         <button className="menu-toggle" type="button" aria-expanded={open} aria-controls="primary-nav" aria-label={open ? "Cerrar menú" : "Abrir menú"} onClick={() => setOpen(!open)}>

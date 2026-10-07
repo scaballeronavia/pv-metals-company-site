@@ -1,4 +1,4 @@
-:root{color-scheme:dark;--ink:#07090a;--mist:#eff3f2;--muted:#aebbbd;--orange:#ee7d2d;--line:rgba(216,231,231,.22);--max:1800px}
+:root{color-scheme:dark;--ink:#07090a;--mist:#eff3f2;--muted:#aebbbd;--orange:#eb7f3a;--pv-red:#e02a27;--pv-gold:#f7c452;--line:rgba(216,231,231,.22);--max:1800px}
 *{box-sizing:border-box}
 html{scroll-behavior:auto;background:var(--ink)}
 body{margin:0;min-width:320px;background:var(--ink);color:var(--mist);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
@@ -68,3 +68,28 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
 @media(min-width:901px) and (max-height:790px){.chapter-inner{padding-top:104px;padding-bottom:35px}.hero-kicker{margin-top:40px}.hero-description{margin-top:23px}.hero-actions{margin-top:24px}h1{font-size:clamp(65px,6.6vw,120px)}.chapter h2{font-size:clamp(58px,5.5vw,100px)}}
 @media(min-width:681px) and (max-width:1120px){.chapter-hero .chapter-copy{width:min(48%,500px)}.chapter-hero .hero-description{max-width:390px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Fase 1B: identidad oficial PV sobre la dirección de plata y grafito existente. */
+.site-header{background:#000;border-bottom-color:rgba(224,42,39,.3)}
+.brand{gap:13px;min-width:228px}
+.brand-isotype{display:block;flex:none;width:49px;height:64px;background-repeat:no-repeat;background-size:contain;background-position:center}
+.brand-name{padding-left:13px;border-left:1px solid rgba(247,196,82,.5);color:#f2f2f0;font-family:"Cooper Black","Cooper Std Black",Georgia,serif;font-size:13px;font-weight:900;letter-spacing:.025em;line-height:1.12}
+.header-cta{border-color:rgba(224,42,39,.8)}
+.header-cta span{color:var(--pv-gold)}
+.header-cta:hover{background:rgba(224,42,39,.22)}
+.story{background:radial-gradient(ellipse 42% 65% at 80% 11%,rgba(109,21,16,.23),transparent 75%),radial-gradient(ellipse 50% 80% at 70% 15%,#162227,#090d0f 70%,#07090a)}
+.story-stage::before{background:radial-gradient(ellipse 62% 60% at 80% 34%,rgba(224,42,39,.09),transparent 68%),radial-gradient(ellipse 70% 90% at 52% 50%,transparent 36%,rgba(4,6,7,.26) 100%)}
+.hero-description{border-left-color:var(--pv-red)}
+.period{color:var(--pv-red);text-shadow:0 0 20px rgba(224,42,39,.38)}
+.button-primary{border-color:#bf2421;background:#bf2421;color:#fff}
+.button-primary:hover{border-color:#e02a27;background:#e02a27}
+.button-secondary{border-bottom-color:var(--pv-gold)}
+.button-secondary:hover{border-bottom-color:var(--pv-gold);color:var(--pv-gold)}
+.story-progress span{background:linear-gradient(var(--pv-red),var(--orange),var(--pv-gold));box-shadow:0 0 11px rgba(224,42,39,.55)}
+.hero-ingot-controls{border-left:2px solid var(--pv-red)}
+
+@media(max-width:900px){.brand{min-width:0}.brand-isotype{width:41px;height:54px}.brand-name{font-size:11px}}
+@media(max-width:680px){.story-stage::before{background:linear-gradient(0deg,rgba(4,7,8,.9) 0%,rgba(4,7,8,.65) 27%,rgba(4,7,8,.02) 69%),radial-gradient(ellipse 70% 50% at 80% 15%,rgba(224,42,39,.11),transparent 75%)}.brand{gap:10px}.brand-name{padding-left:10px;font-size:10px}.hero-actions .button-primary{min-width:182px}.hero-actions .button-secondary{font-size:12px}}
+@media(max-width:900px){.site-footer{flex-wrap:wrap}}
+@media(max-width:680px){.hero-ingot-interaction{touch-action:pan-y}}
+@media(max-width:390px) and (max-height:740px){.hero-ingot-controls{top:60px;bottom:auto}}
