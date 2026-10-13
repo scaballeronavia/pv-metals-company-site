@@ -63,14 +63,7 @@ export default function HeroScene() {
     updateConditions();
     updateProgress();
     detectionFrame = requestAnimationFrame(() => {
-      try {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
-        setCanRender(Boolean(context));
-        context?.getExtension("WEBGL_lose_context")?.loseContext();
-      } catch {
-        setCanRender(false);
-      }
+      setCanRender(Boolean(window.WebGL2RenderingContext || window.WebGLRenderingContext));
     });
 
     window.addEventListener("scroll", scheduleProgress, { passive: true });
@@ -105,7 +98,7 @@ export default function HeroScene() {
       <div className="stage-visual stage-visual-detail" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: detailOpacity, transform: reducedMotion ? undefined : `scale(${1 + Math.max(0, progress - 0.64) * 0.12})` }} />
       <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: contactOpacity, transform: reducedMotion ? undefined : `scale(${1 + Math.max(0, progress - 0.87) * 0.14})` }} />
       <div className="stage-ingot-cutout" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: heroOpacity, transform: reducedMotion ? undefined : compact ? `translateX(-50%) translateY(${-Math.min(progress, 0.25) * 25}px) scale(${1 + Math.min(progress, 0.25) * 0.24})` : `translate(-50%,-50%) translate3d(var(--ingot-x, 0px),calc(var(--ingot-y, 0px) - ${Math.min(progress, 0.25) * 28}px),60px) rotateY(var(--ingot-tilt, 0deg)) scale(${1 + Math.min(progress, 0.25) * 0.24})` }} />
-      {canRender && progress > 0.07 && progress < 0.49 ? <MetalSceneCanvas progress={progress} reducedMotion={reducedMotion} compact={compact} active={active} /> : null}
+      {canRender && progress > 0.21 && progress < 0.49 ? <MetalSceneCanvas progress={progress} reducedMotion={reducedMotion} compact={compact} active={active} /> : null}
       <div className="story-progress"><span style={{ transform: "scaleY(" + Math.max(progress, 0.02) + ")" }} /></div>
       <span className="stage-coordinate">PV / AG / 47</span>
     </div>

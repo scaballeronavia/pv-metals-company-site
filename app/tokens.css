@@ -1,0 +1,15 @@
+/* Valores base de la dirección visual aprobada en Fase 1B. */
+:root {
+  color-scheme: dark;
+  --ink: #07090a;
+  --mist: #eff3f2;
+  --muted: #aebbbd;
+  --orange: #eb7f3a;
+  --pv-red: #e02a27;
+  --pv-gold: #f7c452;
+  --line: rgba(216, 231, 231, .22);
+  --max: 1800px;
+  --focus-ring: #ffb16e;
+  --font-body: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --font-brand: "Cooper Black", "Cooper Std Black", Georgia, serif;
+}

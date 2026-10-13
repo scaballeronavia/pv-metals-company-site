@@ -13,15 +13,15 @@ function StudioEnvironment() {
   const resources = useMemo(() => {
     const generator = new THREE.PMREMGenerator(gl);
     const room = new RoomEnvironment();
-    const texture = generator.fromScene(room).texture;
-    return { generator, room, texture };
+    const target = generator.fromScene(room);
+    return { generator, room, target };
   }, [gl]);
   useEffect(() => () => {
-    resources.texture.dispose();
+    resources.target.dispose();
     resources.generator.dispose();
     resources.room.dispose();
   }, [resources]);
-  return <primitive object={resources.texture} attach="environment" />;
+  return <primitive object={resources.target.texture} attach="environment" />;
 }
 
 function ProductCloud() {

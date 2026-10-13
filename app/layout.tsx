@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteAsset } from "@/lib/site-asset";
+import "./tokens.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

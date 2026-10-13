@@ -1,22 +1,45 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Component, useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 
 const Ingot360Canvas = dynamic(() => import("./Ingot360Canvas"), { ssr: false });
-
+const initialYaw = -0.28;
 const initialPitch = 0;
+
+class CanvasBoundary extends Component<{ children: ReactNode; onError: () => void }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onError();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+type DragState = { x: number; y: number; startX: number; startY: number; active: boolean; touch: boolean };
 
 export default function HeroIngot3D() {
   const area = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ x: number; y: number } | null>(null);
-  const [visible, setVisible] = useState(true);
+  const drag = useRef<DragState | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [journeyPresent, setJourneyPresent] = useState(false);
   const [webgl, setWebgl] = useState(false);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [contextLost, setContextLost] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [compact, setCompact] = useState(false);
   const [narrow, setNarrow] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [yaw, setYaw] = useState(0);
+  const [yaw, setYaw] = useState(initialYaw);
   const [pitch, setPitch] = useState(initialPitch);
 
   useEffect(() => {
@@ -33,21 +56,23 @@ export default function HeroIngot3D() {
     tablet.addEventListener("change", update);
     motion.addEventListener("change", update);
     const observer = new IntersectionObserver(([entry]) => {
-      const inHero = entry.intersectionRatio > 0.25;
+      const inHero = entry.intersectionRatio > 0.5;
       setVisible(inHero);
       if (!inHero) setReady(false);
-    }, { threshold: 0.25 });
+    }, { threshold: 0.5 });
     const hero = document.getElementById("inicio");
     if (hero) observer.observe(hero);
+    const storyStage = document.querySelector(".story-stage");
+    const updateJourney = () => {
+      const present = Boolean(storyStage?.querySelector(".journey-canvas"));
+      setJourneyPresent(present);
+      if (present) setReady(false);
+    };
+    updateJourney();
+    const journeyObserver = storyStage ? new MutationObserver(updateJourney) : null;
+    if (storyStage) journeyObserver?.observe(storyStage, { childList: true, subtree: true });
     const detectionFrame = requestAnimationFrame(() => {
-      try {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
-        setWebgl(Boolean(context));
-        context?.getExtension("WEBGL_lose_context")?.loseContext();
-      } catch {
-        setWebgl(false);
-      }
+      setWebgl(Boolean(window.WebGL2RenderingContext || window.WebGLRenderingContext));
     });
     return () => {
       cancelAnimationFrame(detectionFrame);
@@ -55,25 +80,61 @@ export default function HeroIngot3D() {
       tablet.removeEventListener("change", update);
       motion.removeEventListener("change", update);
       observer.disconnect();
+      journeyObserver?.disconnect();
     };
   }, []);
 
+  useEffect(() => {
+    if (!webgl || !visible || journeyPresent || ready || failed || contextLost) return;
+    const timer = window.setTimeout(() => setFailed(true), 12000);
+    return () => window.clearTimeout(timer);
+  }, [webgl, visible, journeyPresent, ready, failed, contextLost, retryKey]);
+
   const onReady = useCallback(() => setReady(true), []);
+  const onError = useCallback(() => { setReady(false); setFailed(true); }, []);
+  const onContextLost = useCallback(() => { setReady(false); setContextLost(true); }, []);
+  const onContextRestored = useCallback(() => {
+    setReady(false);
+    setContextLost(false);
+    setRetryKey((current) => current + 1);
+  }, []);
+  const retry = () => {
+    setReady(false);
+    setFailed(false);
+    setContextLost(false);
+    setRetryKey((current) => current + 1);
+  };
+
+  const active = webgl && visible && !journeyPresent && ready && !failed && !contextLost;
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!webgl || !ready || event.button !== 0) return;
-    drag.current = { x: event.clientX, y: event.clientY };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.currentTarget.classList.add("is-dragging");
+    if (!active || event.button !== 0) return;
+    const touch = event.pointerType === "touch";
+    drag.current = { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, active: !touch, touch };
+    if (!touch) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.currentTarget.classList.add("is-dragging");
+    }
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag.current) return;
-    const dx = event.clientX - drag.current.x;
-    const dy = event.clientY - drag.current.y;
-    drag.current = { x: event.clientX, y: event.clientY };
-    setYaw((current) => current + dx * 0.012);
-    setPitch((current) => Math.max(-0.68, Math.min(0.58, current + dy * 0.008)));
+    const current = drag.current;
+    if (!current) return;
+    if (!current.active) {
+      const horizontal = Math.abs(event.clientX - current.startX);
+      const vertical = Math.abs(event.clientY - current.startY);
+      if (vertical > 8 && vertical > horizontal) { drag.current = null; return; }
+      if (horizontal < 6 || horizontal < vertical * 1.2) return;
+      current.active = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.currentTarget.classList.add("is-dragging");
+    }
+    const dx = event.clientX - current.x;
+    const dy = event.clientY - current.y;
+    current.x = event.clientX;
+    current.y = event.clientY;
+    setYaw((value) => value + dx * 0.012);
+    if (!current.touch) setPitch((value) => Math.max(-0.68, Math.min(0.58, value + dy * 0.008)));
   };
 
   const endDrag = () => {
@@ -82,42 +143,57 @@ export default function HeroIngot3D() {
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!active) return;
     switch (event.key) {
-      case "ArrowLeft": setYaw((current) => current - Math.PI / 12); break;
-      case "ArrowRight": setYaw((current) => current + Math.PI / 12); break;
-      case "ArrowUp": setPitch((current) => Math.max(-0.68, current - 0.1)); break;
-      case "ArrowDown": setPitch((current) => Math.min(0.58, current + 0.1)); break;
-      case "Home": setYaw(0); setPitch(initialPitch); break;
+      case "ArrowLeft": setYaw((value) => value - Math.PI / 12); break;
+      case "ArrowRight": setYaw((value) => value + Math.PI / 12); break;
+      case "ArrowUp": setPitch((value) => Math.max(-0.68, value - 0.1)); break;
+      case "ArrowDown": setPitch((value) => Math.min(0.58, value + 0.1)); break;
+      case "Home": setYaw(initialYaw); setPitch(initialPitch); break;
       default: return;
     }
     event.preventDefault();
   };
 
-  if (!webgl || !visible) return null;
+  if (!visible || !webgl || journeyPresent) return null;
 
   return (
-    <div
-      ref={area}
-      className={`hero-ingot-interaction${ready ? " hero-ingot-ready" : ""}`}
-      role="group"
-      tabIndex={0}
-      data-rotation-deg={Math.round(yaw * 180 / Math.PI)}
-      aria-label="Lingote conceptual de PV Metals en 3D"
-      aria-describedby="ingot-instructions"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
-      onLostPointerCapture={endDrag}
-      onKeyDown={onKeyDown}
-    >
-      <Ingot360Canvas key={compact ? "compact" : narrow ? "narrow" : "wide"} yaw={yaw} pitch={pitch} reducedMotion={reducedMotion} compact={compact} narrow={narrow} onReady={onReady} />
-      <div className="hero-ingot-controls">
-        <p id="ingot-instructions">{compact ? "Desliza" : "Arrastra"} para girar 360° <span aria-hidden="true">↔</span></p>
-        <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => { setYaw(0); setPitch(initialPitch); }}>
-          Vista inicial
-        </button>
-      </div>
-    </div>
+    <>
+      {!failed && (
+        <div
+          ref={area}
+          className={`hero-ingot-interaction${active ? " hero-ingot-ready" : ""}`}
+          role={active ? "group" : undefined}
+          tabIndex={active ? 0 : -1}
+          data-rotation-deg={Math.round((yaw - initialYaw) * 180 / Math.PI)}
+          aria-label={active ? "Lingote conceptual de PV Metals en 3D" : undefined}
+          aria-describedby={active ? "ingot-instructions" : undefined}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onLostPointerCapture={endDrag}
+          onKeyDown={onKeyDown}
+        >
+          <CanvasBoundary key={retryKey} onError={onError}>
+            <Ingot360Canvas yaw={yaw} pitch={pitch} reducedMotion={reducedMotion} compact={compact} narrow={narrow} onReady={onReady} onContextLost={onContextLost} onContextRestored={onContextRestored} />
+          </CanvasBoundary>
+          {active && (
+            <div className="hero-ingot-controls">
+              <p id="ingot-instructions">{compact ? "Desliza" : "Arrastra"} para girar 360° <span aria-hidden="true">↔</span></p>
+              <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => { setYaw(initialYaw); setPitch(initialPitch); }}>
+                Vista inicial
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {(failed || contextLost) && (
+        <div className="hero-3d-status" role="status">
+          <span>Vista 3D no disponible. Se muestra la imagen conceptual.</span>
+          <button type="button" onClick={retry}>Reintentar 3D</button>
+        </div>
+      )}
+    </>
   );
 }
