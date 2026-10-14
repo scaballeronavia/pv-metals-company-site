@@ -24,11 +24,13 @@ class CanvasBoundary extends Component<{ children: ReactNode; onError: () => voi
   }
 }
 
-type DragState = { x: number; y: number; startX: number; startY: number; active: boolean; touch: boolean };
+type DragState = { pointerId: number; x: number; y: number };
+type TouchState = { identifier: number; x: number; startX: number; startY: number; active: boolean };
 
 export default function HeroIngot3D() {
   const area = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState | null>(null);
+  const touch = useRef<TouchState | null>(null);
   const [visible, setVisible] = useState(false);
   const [journeyPresent, setJourneyPresent] = useState(false);
   const [webgl, setWebgl] = useState(false);
@@ -108,38 +110,65 @@ export default function HeroIngot3D() {
   const active = webgl && visible && !journeyPresent && ready && !failed && !contextLost;
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!active || event.button !== 0) return;
-    const touch = event.pointerType === "touch";
-    drag.current = { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, active: !touch, touch };
-    if (!touch) {
-      event.currentTarget.setPointerCapture(event.pointerId);
-      event.currentTarget.classList.add("is-dragging");
-    }
+    if (!active || event.pointerType === "touch" || event.button !== 0 || !event.isPrimary) return;
+    drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.classList.add("is-dragging");
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const current = drag.current;
-    if (!current) return;
-    if (!current.active) {
-      const horizontal = Math.abs(event.clientX - current.startX);
-      const vertical = Math.abs(event.clientY - current.startY);
-      if (vertical > 8 && vertical > horizontal) { drag.current = null; return; }
-      if (horizontal < 6 || horizontal < vertical * 1.2) return;
-      current.active = true;
-      event.currentTarget.setPointerCapture(event.pointerId);
-      event.currentTarget.classList.add("is-dragging");
-    }
+    if (!current || current.pointerId !== event.pointerId) return;
     const dx = event.clientX - current.x;
     const dy = event.clientY - current.y;
     current.x = event.clientX;
     current.y = event.clientY;
     setYaw((value) => value + dx * 0.012);
-    if (!current.touch) setPitch((value) => Math.max(-0.68, Math.min(0.58, value + dy * 0.008)));
+    setPitch((value) => Math.max(-0.68, Math.min(0.58, value + dy * 0.008)));
   };
 
-  const endDrag = () => {
+  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (drag.current?.pointerId !== event.pointerId) return;
     drag.current = null;
     area.current?.classList.remove("is-dragging");
+  };
+
+  const onLostPointerCapture = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) endDrag(event);
+  };
+
+  const endTouch = () => {
+    touch.current = null;
+    area.current?.classList.remove("is-dragging");
+  };
+
+  const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (!active || event.touches.length !== 1) { endTouch(); return; }
+    const point = event.touches[0];
+    touch.current = { identifier: point.identifier, x: point.clientX, startX: point.clientX, startY: point.clientY, active: false };
+  };
+
+  const onTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const current = touch.current;
+    if (!current || event.touches.length !== 1) { endTouch(); return; }
+    const point = event.touches[0];
+    if (point.identifier !== current.identifier) return;
+    if (!current.active) {
+      const horizontal = Math.abs(point.clientX - current.startX);
+      const vertical = Math.abs(point.clientY - current.startY);
+      if (vertical > 8 && vertical > horizontal) { endTouch(); return; }
+      if (horizontal < 6 || horizontal < vertical * 1.2) return;
+      current.active = true;
+      event.currentTarget.classList.add("is-dragging");
+    }
+    const dx = point.clientX - current.x;
+    current.x = point.clientX;
+    setYaw((value) => value + dx * 0.012);
+  };
+
+  const onTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const current = touch.current;
+    if (current && Array.from(event.changedTouches).some((point) => point.identifier === current.identifier)) endTouch();
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -172,7 +201,11 @@ export default function HeroIngot3D() {
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
-          onLostPointerCapture={endDrag}
+          onLostPointerCapture={onLostPointerCapture}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
           onKeyDown={onKeyDown}
         >
           <CanvasBoundary key={retryKey} onError={onError}>
