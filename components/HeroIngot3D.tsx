@@ -32,7 +32,6 @@ export default function HeroIngot3D() {
   const drag = useRef<DragState | null>(null);
   const touch = useRef<TouchState | null>(null);
   const [visible, setVisible] = useState(false);
-  const [journeyPresent, setJourneyPresent] = useState(false);
   const [webgl, setWebgl] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -64,15 +63,6 @@ export default function HeroIngot3D() {
     }, { threshold: 0.5 });
     const hero = document.getElementById("inicio");
     if (hero) observer.observe(hero);
-    const storyStage = document.querySelector(".story-stage");
-    const updateJourney = () => {
-      const present = Boolean(storyStage?.querySelector(".journey-canvas"));
-      setJourneyPresent(present);
-      if (present) setReady(false);
-    };
-    updateJourney();
-    const journeyObserver = storyStage ? new MutationObserver(updateJourney) : null;
-    if (storyStage) journeyObserver?.observe(storyStage, { childList: true, subtree: true });
     const detectionFrame = requestAnimationFrame(() => {
       setWebgl(Boolean(window.WebGL2RenderingContext || window.WebGLRenderingContext));
     });
@@ -82,15 +72,14 @@ export default function HeroIngot3D() {
       tablet.removeEventListener("change", update);
       motion.removeEventListener("change", update);
       observer.disconnect();
-      journeyObserver?.disconnect();
     };
   }, []);
 
   useEffect(() => {
-    if (!webgl || !visible || journeyPresent || ready || failed || contextLost) return;
+    if (!webgl || !visible || ready || failed || contextLost) return;
     const timer = window.setTimeout(() => setFailed(true), 12000);
     return () => window.clearTimeout(timer);
-  }, [webgl, visible, journeyPresent, ready, failed, contextLost, retryKey]);
+  }, [webgl, visible, ready, failed, contextLost, retryKey]);
 
   const onReady = useCallback(() => setReady(true), []);
   const onError = useCallback(() => { setReady(false); setFailed(true); }, []);
@@ -107,7 +96,7 @@ export default function HeroIngot3D() {
     setRetryKey((current) => current + 1);
   };
 
-  const active = webgl && visible && !journeyPresent && ready && !failed && !contextLost;
+  const active = webgl && visible && ready && !failed && !contextLost;
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!active || event.pointerType === "touch" || event.button !== 0 || !event.isPrimary) return;
@@ -172,7 +161,7 @@ export default function HeroIngot3D() {
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!active) return;
+    if (!active || event.target !== event.currentTarget) return;
     switch (event.key) {
       case "ArrowLeft": setYaw((value) => value - Math.PI / 12); break;
       case "ArrowRight": setYaw((value) => value + Math.PI / 12); break;
@@ -184,7 +173,7 @@ export default function HeroIngot3D() {
     event.preventDefault();
   };
 
-  if (!visible || !webgl || journeyPresent) return null;
+  if (!visible || !webgl) return null;
 
   return (
     <>
@@ -213,7 +202,7 @@ export default function HeroIngot3D() {
           </CanvasBoundary>
           {active && (
             <div className="hero-ingot-controls">
-              <p id="ingot-instructions">{compact ? "Desliza" : "Arrastra"} para girar 360° <span aria-hidden="true">↔</span></p>
+              <p id="ingot-instructions">{compact ? "Desliza" : "Arrastra"} para girar 360° <span aria-hidden="true">↔</span><span className="sr-only"> Usa las flechas del teclado para girar o la tecla Inicio para restablecer la vista.</span></p>
               <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => { setYaw(initialYaw); setPitch(initialPitch); }}>
                 Vista inicial
               </button>

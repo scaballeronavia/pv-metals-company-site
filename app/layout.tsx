@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description:
     "PV Metals Company: refinación especializada de plata, lingotes, granalla y servicio toll en Cochabamba, Bolivia.",
   robots: { index: true, follow: true },
+  icons: { icon: siteAsset("/images/pv-isotype-color-dark.svg") },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

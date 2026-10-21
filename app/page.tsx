@@ -3,6 +3,8 @@ import Footer from "@/components/Footer";
 import HeroIngot3D from "@/components/HeroIngot3D";
 import HeroIntroMotion from "@/components/HeroIntroMotion";
 import StoryScene from "@/components/StoryScene";
+import Image from "next/image";
+import { siteAsset } from "@/lib/site-asset";
 import { siteContact } from "@/lib/site-config";
 
 export default function Home() {
@@ -59,8 +61,8 @@ export default function Home() {
             <div className="chapter-inner">
               <p className="concept-caption">Representación conceptual de plata refinada</p>
               <div className="chapter-copy">
-                <h2 id="facts-title">El valor está<br /><em>en el detalle.</em></h2>
-                <div className="purity"><strong>Hasta 99,9<span>%</span></strong><p>Pureza respaldada por análisis de varios lotes producidos.</p></div>
+                <h2 id="facts-title">El valor está<br /><em>en la Calidad</em></h2>
+                <div className="purity"><div className="purity-value"><span>Hasta</span>{" "}<strong>99,9<span>%</span></strong></div><p>Pureza respaldada por análisis de varios lotes producidos.</p></div>
                 <p className="availability">Volumen habitual desde 50 kg. Cantidades menores según disponibilidad.</p>
               </div>
             </div>
@@ -69,6 +71,10 @@ export default function Home() {
           <section className="chapter chapter-products" id="productos" aria-labelledby="products-title">
             <div className="chapter-inner">
               <p className="concept-caption">Representación conceptual de las presentaciones</p>
+              <div className="product-pair" aria-hidden="true">
+                <Image className="product-pair-ingot" src={siteAsset("/images/pv-ingot-cutout.webp")} width={1280} height={853} alt="" unoptimized />
+                <Image className="product-pair-granalla" src={siteAsset("/images/granalla-silver-cutout.webp")} width={1254} height={1254} alt="" unoptimized />
+              </div>
               <div className="chapter-copy">
                 <h2 id="products-title">Una materia.<br /><em>Dos formas.</em></h2>
                 <p className="chapter-lead">Plata refinada en presentaciones pensadas para distintas necesidades comerciales.</p>
@@ -85,7 +91,7 @@ export default function Home() {
             <div className="chapter-inner">
               <div className="chapter-copy">
                 <h2 id="contact-title">Hablemos de<br /><em>tu próximo lote.</em></h2>
-                <p className="chapter-lead">Atención en Cochabamba y a nivel nacional. Cuéntanos qué material tienes y conversemos sobre tus necesidades.</p>
+                <p className="chapter-lead">Atención a nivel local, nacional e internacional. Cuéntanos qué material tienes y conversemos sobre tus necesidades.</p>
                 <div className="contact-actions">
                   <a className="button-primary" href={siteContact.quote} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp <span aria-hidden="true">↗</span></a>
                   <a className="button-secondary" href={siteContact.email}>Enviar un correo <span aria-hidden="true">↗</span></a>
