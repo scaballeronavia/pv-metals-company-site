@@ -99,7 +99,7 @@ export default function StoryScene() {
   const machineTravel = reducedMotion || chapter !== 2 ? 0 : position.progress - 0.5;
   const machineTransform = reducedMotion ? "none" : `translate3d(0,${-26 * machineTravel * (compact ? 0.7 : 1)}px,0) rotateY(${8 * machineTravel * (compact ? 0.6 : 1)}deg) scale(1.035)`;
   const granallaOpacity = chapter === 1 || chapter === 4 || chapter === 5 ? 1 : chapter === 3 ? chapterBlend : 0;
-  const granallaOffset = chapter === 1 ? (reducedMotion ? 18 : 14 + 4 * position.progress) : chapter === 4 ? -18 + 36 * chapterBlend : chapter === 5 ? 0 : -18;
+  const granallaOffset = chapter === 1 ? (reducedMotion ? 18 : 14 + 4 * position.progress) : chapter === 4 ? -30 - 6 * chapterBlend : chapter === 5 ? 0 : -18;
   const granallaTilt = reducedMotion ? 0 : chapter === 1 ? -3 + 6 * position.progress : chapter === 4 ? -3 + 6 * chapterBlend : chapter === 5 ? 3 + position.progress : -3;
   const productTravel = reducedMotion ? 0 : position.progress - 0.5;
 
@@ -111,7 +111,7 @@ export default function StoryScene() {
       <div className="stage-visual stage-visual-liquid" style={{ backgroundImage: `url("${siteAsset("/images/granalla-machine-concept.webp")}")`, opacity: chapter === 2 ? 1 : 0, transform: machineTransform }} />
       <div className="stage-visual stage-visual-industry" style={{ backgroundImage: `url("${siteAsset("/images/industrial-concept.jpg")}")`, opacity: chapter === 3 ? 1 : 0 }} />
       <div className="stage-visual stage-visual-products" style={{ opacity: chapter === 4 || chapter === 5 ? 1 : 0 }} />
-      {(chapter === 1 || chapter === 3 || chapter === 4 || chapter === 5) && <div className={`stage-visual stage-visual-granalla${chapter === 5 ? " is-product" : ""}`} style={{ backgroundImage: `url("${siteAsset("/images/granalla-silver-cutout.webp")}")`, opacity: granallaOpacity, transform: `translate3d(${compact ? 0 : granallaOffset}vw,${chapter === 5 ? -18 * productTravel : 0}px,0) rotateY(${compact ? granallaTilt * 0.65 : granallaTilt}deg)` }} />}
+      {(chapter === 1 || chapter === 3 || chapter === 4 || chapter === 5) && <div className={`stage-visual stage-visual-granalla${chapter === 5 ? " is-product" : ""}`} style={{ backgroundImage: `url("${siteAsset("/images/granalla-silver-cutout.webp")}")`, opacity: granallaOpacity, transform: `translate3d(calc(${compact ? 0 : granallaOffset}vw + var(--granalla-pureza-shift, 0vw)),${chapter === 5 ? -18 * productTravel : 0}px,0) rotateY(${compact ? granallaTilt * 0.65 : granallaTilt}deg)` }} />}
       {chapter === 5 && <div className="stage-product-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-cutout.webp")}")`, transform: reducedMotion ? "none" : `translate3d(0,${-24 * productTravel}px,0) rotateY(${6 * productTravel}deg)` }} />}
       <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: chapter === 6 ? 1 : 0 }} />
       <div className="stage-ingot-cutout" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: heroOpacity, transform: reducedMotion ? undefined : compact ? "translateX(-50%)" : "translate(-50%,-50%) translate3d(var(--ingot-x, 0px),var(--ingot-y, 0px),60px) rotateY(var(--ingot-tilt, 0deg))" }} />

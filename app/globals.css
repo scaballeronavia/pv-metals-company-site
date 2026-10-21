@@ -132,6 +132,9 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
   .stage-visual-matter,.stage-visual-products{mask-image:none}
   .chapter-align-right .concept-caption{left:22px}
 }
+@media(min-width:681px) and (max-width:900px){
+  .scene-shell[data-story-chapter="4"]{--granalla-pureza-shift:-8vw}
+}
 @media(max-width:680px){
   .stage-visual-matter,.stage-visual-industry,.stage-visual-detail,.stage-visual-products{background-size:auto 68svh;background-position:center 4svh;mask-image:none}
   .stage-visual-liquid{background-size:min(112vw,560px) auto;background-position:center 11svh;mask-image:none}
