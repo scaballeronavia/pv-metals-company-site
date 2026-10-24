@@ -49,8 +49,8 @@ export default function Home() {
             <div className="chapter-inner">
               <p className="concept-caption">Visualización conceptual del entorno industrial</p>
               <div className="chapter-copy">
-                <h2 id="toll-title">Tu material.<br /><em>Nuestra especialidad.</em></h2>
-                <p className="chapter-lead">Refinamos concentrado de óxido de plata del cliente en nuestras instalaciones.</p>
+                <h2 id="toll-title">Realizamos<br /><em>Refinado de Plata</em></h2>
+                <p className="chapter-lead">en nuestras instalaciones con materia prima de nuestros clientes (servicio Toll).</p>
                 <div className="feature-rule"><strong>6–10 días</strong><span>Tiempo estimado, dependiendo de la ley del concentrado.</span></div>
                 <a className="text-link" href={siteContact.toll} target="_blank" rel="noopener noreferrer">Consultar servicio Toll <span aria-hidden="true">↗</span></a>
               </div>
@@ -62,7 +62,7 @@ export default function Home() {
               <p className="concept-caption">Representación conceptual de plata refinada</p>
               <div className="chapter-copy">
                 <h2 id="facts-title">El valor está<br /><em>en la Calidad</em></h2>
-                <div className="purity"><div className="purity-value"><span>Hasta</span>{" "}<strong>99,9<span>%</span></strong></div><p>Pureza respaldada por análisis de varios lotes producidos.</p></div>
+                <div className="purity"><div className="purity-value"><span>Se Garantiza</span>{" "}<strong>99,9<span>%</span></strong></div><p>Pureza respaldada por análisis de varios lotes producidos.</p></div>
                 <p className="availability">Volumen habitual desde 50 kg. Cantidades menores según disponibilidad.</p>
               </div>
             </div>
@@ -72,7 +72,7 @@ export default function Home() {
             <div className="chapter-inner">
               <p className="concept-caption">Representación conceptual de las presentaciones</p>
               <div className="product-pair" aria-hidden="true">
-                <Image className="product-pair-ingot" src={siteAsset("/images/pv-ingot-cutout.webp")} width={1280} height={853} alt="" unoptimized />
+                <Image className="product-pair-ingot" src={siteAsset("/images/pv-ingot-silver-brand-cutout.webp")} width={1536} height={1024} alt="" unoptimized />
                 <Image className="product-pair-granalla" src={siteAsset("/images/granalla-silver-cutout.webp")} width={1254} height={1254} alt="" unoptimized />
               </div>
               <div className="chapter-copy">

@@ -105,16 +105,16 @@ export default function StoryScene() {
 
   return (
     <div ref={stage} className="scene-shell" data-story-chapter={chapter}>
-      <div className="stage-visual stage-visual-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: heroOpacity }} />
+      <div className="stage-visual stage-visual-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: heroOpacity }} />
       <div className="stage-visual stage-visual-ingot-empty" style={{ backgroundImage: `url("${siteAsset("/images/ingot-stage-empty.jpg")}")` }} />
       <div className="stage-visual stage-visual-matter" style={{ opacity: chapter === 1 ? 1 : 0 }} />
       <div className="stage-visual stage-visual-liquid" style={{ backgroundImage: `url("${siteAsset("/images/granalla-machine-concept.webp")}")`, opacity: chapter === 2 ? 1 : 0, transform: machineTransform }} />
       <div className="stage-visual stage-visual-industry" style={{ backgroundImage: `url("${siteAsset("/images/industrial-concept.jpg")}")`, opacity: chapter === 3 ? 1 : 0 }} />
       <div className="stage-visual stage-visual-products" style={{ opacity: chapter === 4 || chapter === 5 ? 1 : 0 }} />
       {(chapter === 1 || chapter === 3 || chapter === 4 || chapter === 5) && <div className={`stage-visual stage-visual-granalla${chapter === 5 ? " is-product" : ""}`} style={{ backgroundImage: `url("${siteAsset("/images/granalla-silver-cutout.webp")}")`, opacity: granallaOpacity, transform: `translate3d(calc(${compact ? 0 : granallaOffset}vw + var(--granalla-pureza-shift, 0vw)),${chapter === 5 ? -18 * productTravel : 0}px,0) rotateY(${compact ? granallaTilt * 0.65 : granallaTilt}deg)` }} />}
-      {chapter === 5 && <div className="stage-product-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-cutout.webp")}")`, transform: reducedMotion ? "none" : `translate3d(0,${-24 * productTravel}px,0) rotateY(${6 * productTravel}deg)` }} />}
-      <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: chapter === 6 ? 1 : 0 }} />
-      <div className="stage-ingot-cutout" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-concept.jpg")}")`, opacity: heroOpacity, transform: reducedMotion ? undefined : compact ? "translateX(-50%)" : "translate(-50%,-50%) translate3d(var(--ingot-x, 0px),var(--ingot-y, 0px),60px) rotateY(var(--ingot-tilt, 0deg))" }} />
+      {chapter === 5 && <div className="stage-product-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand-cutout.webp")}")`, transform: reducedMotion ? "none" : `translate3d(0,${-24 * productTravel}px,0) rotateY(${6 * productTravel}deg)` }} />}
+      <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: chapter === 6 ? 1 : 0 }} />
+      <div className="stage-ingot-cutout" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: heroOpacity, transform: reducedMotion ? undefined : compact ? "translateX(-50%)" : "translate(-50%,-50%) translate3d(var(--ingot-x, 0px),var(--ingot-y, 0px),60px) rotateY(var(--ingot-tilt, 0deg))" }} />
       <div className="story-progress"><span style={{ transform: `scaleY(${Math.max(position.total, 0.02)})` }} /></div>
       <span className="stage-coordinate">PV / AG / 47</span>
     </div>

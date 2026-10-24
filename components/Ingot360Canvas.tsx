@@ -23,7 +23,7 @@ type Point2 = [number, number];
 const segmentsPerCorner = 8;
 const segmentsPerSide = 12;
 const pointsPerRing = (segmentsPerCorner + 1 + segmentsPerSide) * 4;
-const imageWidth = 1535;
+const imageWidth = 1536;
 const imageHeight = 1024;
 const imageCorners = {
   frontLeft: [220, 510] as Point2,
@@ -153,11 +153,35 @@ function ContextEvents({ onContextLost, onContextRestored }: Pick<CanvasProps, "
   return null;
 }
 
+function castSilverTexture() {
+  const size = 128;
+  const pixels = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const grain = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      const fine = grain - Math.floor(grain);
+      const wave = Math.sin(x * 0.31 + Math.sin(y * 0.19)) * 0.5 + 0.5;
+      const value = Math.round(158 + fine * 58 + wave * 18);
+      const offset = (y * size + x) * 4;
+      pixels[offset] = value;
+      pixels[offset + 1] = value;
+      pixels[offset + 2] = value;
+      pixels[offset + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(pixels, size, size, THREE.RGBAFormat);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(5, 2);
+  texture.needsUpdate = true;
+  return texture;
+}
+
 function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" | "pitch" | "reducedMotion" | "onReady">) {
   const group = useRef<THREE.Group>(null);
   const firstFrame = useRef(false);
   const readyFrame = useRef<number>(0);
-  const source = useLoader(THREE.TextureLoader, siteAsset("/images/pv-ingot-concept.jpg"));
+  const source = useLoader(THREE.TextureLoader, siteAsset("/images/pv-ingot-silver-brand.webp"));
   const photo = useMemo(() => {
     const texture = source.clone();
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -165,6 +189,7 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
     texture.needsUpdate = true;
     return texture;
   }, [source]);
+  const silverGrain = useMemo(() => castSilverTexture(), []);
   const geometry = useMemo(() => {
     const cap: Profile = { x: 1.03, z: 1.91, y: 0.445, radius: 0.13 };
     const shoulder: Profile = { x: 1.2, z: 2.1, y: 0.23, radius: 0.23 };
@@ -191,8 +216,9 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
   useEffect(() => () => {
     cancelAnimationFrame(readyFrame.current);
     photo.dispose();
+    silverGrain.dispose();
     Object.values(geometry).forEach((part) => part.dispose());
-  }, [photo, geometry]);
+  }, [photo, silverGrain, geometry]);
   useEffect(() => { invalidate(); }, [yaw, pitch, reducedMotion, invalidate]);
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -209,19 +235,19 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
   return (
     <group ref={group}>
       <mesh geometry={geometry.cap}>
-        <meshPhysicalMaterial map={photo} color="#aeb8ba" metalness={0.62} roughness={0.29} envMapIntensity={0.72} clearcoat={0.24} clearcoatRoughness={0.22} side={THREE.DoubleSide} />
+        <meshPhysicalMaterial map={photo} color="#ffffff" metalness={0.48} roughness={0.32} envMapIntensity={0.82} clearcoat={0.18} clearcoatRoughness={0.24} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.rim}>
-        <meshStandardMaterial color="#c9d0d0" metalness={0.94} roughness={0.17} envMapIntensity={1.18} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#e6e6e6" metalness={0.92} roughness={0.2} envMapIntensity={1.12} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.shoulder}>
-        <meshStandardMaterial color="#778184" metalness={0.93} roughness={0.24} envMapIntensity={0.9} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#c2c2c2" metalness={0.98} roughness={0.24} bumpMap={silverGrain} bumpScale={0.024} envMapIntensity={1.05} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.body}>
-        <meshStandardMaterial color="#667174" metalness={0.9} roughness={0.3} envMapIntensity={0.96} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#b8b8b8" metalness={0.98} roughness={0.27} bumpMap={silverGrain} bumpScale={0.045} envMapIntensity={1.08} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.base}>
-        <meshStandardMaterial color="#31393b" metalness={0.9} roughness={0.35} envMapIntensity={0.64} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#808080" metalness={0.88} roughness={0.34} envMapIntensity={0.78} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
@@ -239,11 +265,11 @@ export default function Ingot360Canvas({ yaw, pitch, reducedMotion, compact, nar
       <ContextEvents onContextLost={onContextLost} onContextRestored={onContextRestored} />
       <StudioEnvironment />
       <ambientLight intensity={0.26} />
-      <directionalLight color="#eaf7ff" position={[-5, 7, 5]} intensity={1.15} />
-      <directionalLight color="#a7b8c0" position={[5, 3, -5]} intensity={0.75} />
-      <directionalLight color="#f69a56" position={[5, 5, 4]} intensity={0.65} />
+      <directionalLight color="#f6f6f6" position={[-5, 7, 5]} intensity={1.15} />
+      <directionalLight color="#c6c6c6" position={[5, 3, -5]} intensity={0.75} />
+      <directionalLight color="#eeeeee" position={[5, 5, 4]} intensity={0.62} />
       <pointLight color="#ffffff" position={[-3, 5, 2]} intensity={12} distance={15} decay={2} />
-      <pointLight color="#f18035" position={[5, 2.5, 4]} intensity={17} distance={12} decay={2} />
+      <pointLight color="#e8e8e8" position={[5, 2.5, 4]} intensity={15} distance={12} decay={2} />
       <Suspense fallback={null}>
         <Ingot yaw={yaw} pitch={pitch} reducedMotion={reducedMotion} onReady={onReady} />
       </Suspense>

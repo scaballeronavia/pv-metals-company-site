@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es">
-      <head><link rel="preload" as="image" href={siteAsset("/images/pv-ingot-concept.jpg")} /></head>
+      <head><link rel="preload" as="image" href={siteAsset("/images/pv-ingot-silver-brand.webp")} /></head>
       <body>{children}</body>
     </html>
   );
