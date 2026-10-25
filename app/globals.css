@@ -110,6 +110,8 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
 .stage-visual-detail{filter:brightness(.36) saturate(.18)}
 .stage-visual-products{background:radial-gradient(ellipse 48% 60% at 78% 50%,rgba(137,161,166,.12),transparent 75%)}
 .stage-visual-granalla{background-size:min(52vw,810px) auto;background-position:center 53%;transform-style:preserve-3d;backface-visibility:hidden}
+.stage-visual-granalla.is-entering{animation:granalla-reveal .4s ease-out both}
+@keyframes granalla-reveal{from{opacity:0}to{opacity:1}}
 .stage-visual-granalla.is-product{background-size:min(35vw,520px) auto;background-position:94% 75%;transform-origin:76% 72%}
 .stage-product-ingot{position:absolute;z-index:1;top:10svh;right:3vw;width:min(39vw,610px);aspect-ratio:3/2;background-repeat:no-repeat;background-position:center;background-size:contain;filter:grayscale(1) contrast(.82) brightness(1.35) drop-shadow(0 24px 28px rgba(0,0,0,.6));transform-style:preserve-3d;backface-visibility:hidden;will-change:transform;transition:transform .22s ease-out;pointer-events:none}
 .product-pair{display:none}
