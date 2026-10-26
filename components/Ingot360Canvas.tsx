@@ -4,7 +4,6 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { siteAsset } from "@/lib/site-asset";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 type CanvasProps = {
   yaw: number;
@@ -26,11 +25,37 @@ const pointsPerRing = (segmentsPerCorner + 1 + segmentsPerSide) * 4;
 const imageWidth = 1536;
 const imageHeight = 1024;
 const imageCorners = {
-  frontLeft: [220, 510] as Point2,
-  frontRight: [730, 687] as Point2,
-  backRight: [1263, 128] as Point2,
-  backLeft: [830, 65] as Point2,
+  frontLeft: [245, 555] as Point2,
+  frontRight: [735, 695] as Point2,
+  backRight: [1320, 125] as Point2,
+  backLeft: [900, 35] as Point2,
 };
+const imageBase = {
+  frontLeft: [140, 760] as Point2,
+  frontRight: [745, 1004] as Point2,
+  backRight: [1400, 350] as Point2,
+};
+const capHeight = 0.445;
+const baseHeight = -0.33;
+
+function interpolate(a: Point2, b: Point2, t: number): Point2 {
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+}
+
+function photoUv(point: THREE.Vector3, profile: Profile): Point2 {
+  const x = point.x / profile.x;
+  const z = point.z / profile.z;
+  const vertical = THREE.MathUtils.clamp((capHeight - point.y) / (capHeight - baseHeight), 0, 1);
+  const front = Math.abs(z) >= Math.abs(x);
+  const top = front
+    ? interpolate(imageCorners.frontLeft, imageCorners.frontRight, (x + 1) / 2)
+    : interpolate(imageCorners.frontRight, imageCorners.backRight, (1 - z) / 2);
+  const bottom = front
+    ? interpolate(imageBase.frontLeft, imageBase.frontRight, (x + 1) / 2)
+    : interpolate(imageBase.frontRight, imageBase.backRight, (1 - z) / 2);
+  const pixel = interpolate(top, bottom, vertical);
+  return [pixel[0] / imageWidth, 1 - pixel[1] / imageHeight];
+}
 
 function outline({ x, z, y, radius }: Profile): THREE.Vector3[] {
   const corners: [number, number, number, number][] = [
@@ -100,7 +125,7 @@ function shellGeometry(profiles: Profile[], castSurface = false) {
       const ripple = castSurface ? 0.012 * Math.sin(i * 2.173 + ringIndex * 4.127) * Math.cos(i * 0.49 - ringIndex * 2.33) : 0;
       const normal = new THREE.Vector2(point.x / interpolated[ringIndex].x, point.z / interpolated[ringIndex].z).normalize();
       positions.push(point.x + normal.x * ripple, point.y, point.z + normal.y * ripple);
-      uvs.push(i / pointsPerRing, ringIndex / (rings.length - 1));
+      uvs.push(...photoUv(point, interpolated[ringIndex]));
     }
   });
   const stride = pointsPerRing + 1;
@@ -117,22 +142,6 @@ function shellGeometry(profiles: Profile[], castSurface = false) {
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
   return geometry;
-}
-
-function StudioEnvironment() {
-  const gl = useThree((state) => state.gl);
-  const resources = useMemo(() => {
-    const generator = new THREE.PMREMGenerator(gl);
-    const room = new RoomEnvironment();
-    const target = generator.fromScene(room);
-    return { generator, room, target };
-  }, [gl]);
-  useEffect(() => () => {
-    resources.target.dispose();
-    resources.generator.dispose();
-    resources.room.dispose();
-  }, [resources]);
-  return <primitive object={resources.target.texture} attach="environment" />;
 }
 
 function ContextEvents({ onContextLost, onContextRestored }: Pick<CanvasProps, "onContextLost" | "onContextRestored">) {
@@ -153,35 +162,23 @@ function ContextEvents({ onContextLost, onContextRestored }: Pick<CanvasProps, "
   return null;
 }
 
-function castSilverTexture() {
-  const size = 128;
-  const pixels = new Uint8Array(size * size * 4);
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const grain = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
-      const fine = grain - Math.floor(grain);
-      const wave = Math.sin(x * 0.31 + Math.sin(y * 0.19)) * 0.5 + 0.5;
-      const value = Math.round(158 + fine * 58 + wave * 18);
-      const offset = (y * size + x) * 4;
-      pixels[offset] = value;
-      pixels[offset + 1] = value;
-      pixels[offset + 2] = value;
-      pixels[offset + 3] = 255;
-    }
-  }
-  const texture = new THREE.DataTexture(pixels, size, size, THREE.RGBAFormat);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(5, 2);
-  texture.needsUpdate = true;
-  return texture;
+function CameraFraming({ compact, narrow }: Pick<CanvasProps, "compact" | "narrow">) {
+  const { camera, invalidate } = useThree();
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
+    const position = compact ? [2.9, 5.1, 7.0] : narrow ? [5.9, 8.9, 14.4] : [2.7, 5.8, 7.3];
+    camera.position.set(position[0], position[1], position[2]);
+    camera.lookAt(0, 0, 0);
+    invalidate();
+  }, [camera, compact, narrow, invalidate]);
+  return null;
 }
 
 function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" | "pitch" | "reducedMotion" | "onReady">) {
   const group = useRef<THREE.Group>(null);
   const firstFrame = useRef(false);
   const readyFrame = useRef<number>(0);
-  const source = useLoader(THREE.TextureLoader, siteAsset("/images/pv-ingot-silver-brand.webp"));
+  const source = useLoader(THREE.TextureLoader, siteAsset("/images/pv-ingot-silver-brand-cutout.webp"));
   const photo = useMemo(() => {
     const texture = source.clone();
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -189,25 +186,24 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
     texture.needsUpdate = true;
     return texture;
   }, [source]);
-  const silverGrain = useMemo(() => castSilverTexture(), []);
   const geometry = useMemo(() => {
     const cap: Profile = { x: 1.03, z: 1.91, y: 0.445, radius: 0.13 };
-    const shoulder: Profile = { x: 1.2, z: 2.1, y: 0.23, radius: 0.23 };
-    const base: Profile = { x: 1.285, z: 2.205, y: -0.46, radius: 0.29 };
+    const shoulder: Profile = { x: 1.12, z: 2.02, y: 0.25, radius: 0.19 };
+    const base: Profile = { x: 1.17, z: 2.12, y: -0.33, radius: 0.23 };
     return {
       cap: topGeometry(cap),
       base: topGeometry(base),
-      rim: shellGeometry([cap, { x: 1.08, z: 1.96, y: 0.41, radius: 0.16 }]),
+      rim: shellGeometry([cap, { x: 1.07, z: 1.95, y: 0.41, radius: 0.16 }]),
       shoulder: shellGeometry([
-        { x: 1.08, z: 1.96, y: 0.41, radius: 0.16 },
-        { x: 1.12, z: 2.01, y: 0.36, radius: 0.18 },
+        { x: 1.07, z: 1.95, y: 0.41, radius: 0.16 },
+        { x: 1.09, z: 1.97, y: 0.37, radius: 0.17 },
         shoulder,
       ]),
       body: shellGeometry([
         shoulder,
-        { x: 1.315, z: 2.235, y: -0.35, radius: 0.29 },
-        { x: 1.32, z: 2.24, y: -0.405, radius: 0.30 },
-        { x: 1.285, z: 2.205, y: -0.46, radius: 0.29 },
+        { x: 1.2, z: 2.14, y: -0.23, radius: 0.23 },
+        { x: 1.2, z: 2.14, y: -0.29, radius: 0.24 },
+        base,
       ], true),
     };
   }, []);
@@ -216,9 +212,8 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
   useEffect(() => () => {
     cancelAnimationFrame(readyFrame.current);
     photo.dispose();
-    silverGrain.dispose();
     Object.values(geometry).forEach((part) => part.dispose());
-  }, [photo, silverGrain, geometry]);
+  }, [photo, geometry]);
   useEffect(() => { invalidate(); }, [yaw, pitch, reducedMotion, invalidate]);
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -235,19 +230,19 @@ function Ingot({ yaw, pitch, reducedMotion, onReady }: Pick<CanvasProps, "yaw" |
   return (
     <group ref={group}>
       <mesh geometry={geometry.cap}>
-        <meshPhysicalMaterial map={photo} color="#ffffff" metalness={0.48} roughness={0.32} envMapIntensity={0.82} clearcoat={0.18} clearcoatRoughness={0.24} side={THREE.DoubleSide} />
+        <meshBasicMaterial map={photo} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.rim}>
-        <meshStandardMaterial color="#e6e6e6" metalness={0.92} roughness={0.2} envMapIntensity={1.12} side={THREE.DoubleSide} />
+        <meshBasicMaterial map={photo} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.shoulder}>
-        <meshStandardMaterial color="#c2c2c2" metalness={0.98} roughness={0.24} bumpMap={silverGrain} bumpScale={0.024} envMapIntensity={1.05} side={THREE.DoubleSide} />
+        <meshBasicMaterial map={photo} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.body}>
-        <meshStandardMaterial color="#b8b8b8" metalness={0.98} roughness={0.27} bumpMap={silverGrain} bumpScale={0.045} envMapIntensity={1.08} side={THREE.DoubleSide} />
+        <meshBasicMaterial map={photo} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={geometry.base}>
-        <meshStandardMaterial color="#808080" metalness={0.88} roughness={0.34} envMapIntensity={0.78} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#7f8183" toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
@@ -257,19 +252,13 @@ export default function Ingot360Canvas({ yaw, pitch, reducedMotion, compact, nar
   return (
     <Canvas
       className="hero-ingot-canvas"
-      camera={{ position: compact ? [4.3, 3.8, 7.0] : narrow ? [7.3, 5.7, 12.5] : [4.25, 4.2, 7.3], fov: compact ? 38 : narrow ? 39 : 36, near: 0.1, far: 30 }}
+      camera={{ position: compact ? [2.9, 5.1, 7.0] : narrow ? [5.9, 8.9, 14.4] : [2.7, 5.8, 7.3], fov: 38, near: 0.1, far: 40 }}
       dpr={narrow ? [1, 1.25] : [1, 1.5]}
       frameloop="demand"
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
+      <CameraFraming compact={compact} narrow={narrow} />
       <ContextEvents onContextLost={onContextLost} onContextRestored={onContextRestored} />
-      <StudioEnvironment />
-      <ambientLight intensity={0.26} />
-      <directionalLight color="#f6f6f6" position={[-5, 7, 5]} intensity={1.15} />
-      <directionalLight color="#c6c6c6" position={[5, 3, -5]} intensity={0.75} />
-      <directionalLight color="#eeeeee" position={[5, 5, 4]} intensity={0.62} />
-      <pointLight color="#ffffff" position={[-3, 5, 2]} intensity={12} distance={15} decay={2} />
-      <pointLight color="#e8e8e8" position={[5, 2.5, 4]} intensity={15} distance={12} decay={2} />
       <Suspense fallback={null}>
         <Ingot yaw={yaw} pitch={pitch} reducedMotion={reducedMotion} onReady={onReady} />
       </Suspense>
