@@ -1,6 +1,7 @@
 // Contacto confirmado en DOC/PVMETALSCOMPANY_Levantamiento_Landing_Page_ACTUALIZADO.md.
 const companyWhatsApp = "59176486230";
 const authorWhatsApp = "59179391508";
+export const siteUrl = "https://scaballeronavia.github.io/pv-metals-company-site/";
 
 function whatsappLink(phone: string, message: string): string {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -12,4 +13,8 @@ export const siteContact = {
   email: "mailto:pvmetalscompany@gmail.com?subject=Consulta%20PV%20Metals%20Company",
   address: "Av. Gualberto Villarroel s/n, esquina Pasaje sin nombre, Zona El Abra, Cochabamba, Bolivia.",
   author: whatsappLink(authorWhatsApp, "Hola, Ing. Santiago, vi el sitio de PV Metals Company"),
+} as const;
+
+export const socialLinks = {
+  facebookShare: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}`,
 } as const;
