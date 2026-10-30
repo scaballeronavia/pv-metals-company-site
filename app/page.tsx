@@ -7,6 +7,39 @@ import Image from "next/image";
 import { siteAsset } from "@/lib/site-asset";
 import { siteContact } from "@/lib/site-config";
 
+const socialImages = [
+  {
+    src: "/images/social/comunidad-y-personas.jpeg",
+    width: 940,
+    height: 788,
+    alt: "Grupo de personas reunidas al aire libre durante una actividad comunitaria.",
+    caption: "Personas y comunidad",
+  },
+  {
+    src: "/images/social/jornada-comunitaria.jpeg",
+    width: 719,
+    height: 602,
+    alt: "Personas reunidas bajo una carpa durante una actividad comunitaria de fin de año.",
+    caption: "Jornada compartida",
+  },
+  {
+    src: "/images/social/encuentro-comunitario.jpeg",
+    width: 1076,
+    height: 885,
+    alt: "Personas reunidas alrededor de una mesa durante una comida compartida.",
+    caption: "Una mesa compartida",
+  },
+  {
+    src: "/images/social/campana-comunitaria.jpeg",
+    width: 940,
+    height: 788,
+    alt: "Grupo reunido en una actividad comunitaria de fin de año.",
+    caption: "Un encuentro colectivo",
+  },
+] as const;
+
+const heroBackdrop = `url("${siteAsset("/images/ingot-stage-empty.jpg")}")`;
+
 export default function Home() {
   return (
     <>
@@ -57,6 +90,25 @@ export default function Home() {
             </div>
           </section>
 
+          <section className="chapter chapter-purpose" id="nosotros" aria-labelledby="purpose-title" style={{ backgroundImage: heroBackdrop }}>
+            <div className="chapter-inner purpose-inner">
+              <div className="purpose-heading">
+                <p className="section-kicker">Misión y visión</p>
+                <h2 id="purpose-title">La forma de trabajar.<br /><em>La dirección para avanzar.</em></h2>
+              </div>
+              <div className="purpose-statements">
+                <article className="purpose-statement">
+                  <h3>Misión</h3>
+                  <p>Refinamos plata en nuestras instalaciones con atención a las necesidades de cada cliente. Ofrecemos granalla, lingotes y servicio Toll con foco en la calidad del producto y del servicio.</p>
+                </article>
+                <article className="purpose-statement">
+                  <h3>Visión</h3>
+                  <p>Aspiramos a fortalecer la presencia de PV Metals Company en los mercados nacional e internacional mediante calidad, capacidad de adaptación e innovación.</p>
+                </article>
+              </div>
+            </div>
+          </section>
+
           <section className="chapter chapter-facts chapter-align-right" id="precision" aria-labelledby="facts-title">
             <div className="chapter-inner">
               <p className="concept-caption">Representación conceptual de plata refinada</p>
@@ -83,6 +135,26 @@ export default function Home() {
                   <div><dt>Lingotes</dt><dd>De aproximadamente 10 kg por unidad.</dd></div>
                 </dl>
                 <a className="text-link" href={siteContact.quote} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+          </section>
+
+          <section className="chapter chapter-social" id="responsabilidad" aria-labelledby="social-title" style={{ backgroundImage: heroBackdrop }}>
+            <div className="chapter-inner social-inner">
+              <div className="social-heading">
+                <p className="section-kicker">Responsabilidad social</p>
+                <h2 id="social-title">El valor también<br /><em>está en las personas.</em></h2>
+                <p>Momentos compartidos con la comunidad.</p>
+              </div>
+              <div className="social-gallery" aria-label="Fotografías de actividades comunitarias">
+                {socialImages.map((photo, index) => (
+                  <figure className={`social-figure social-figure-${index + 1}`} key={photo.src}>
+                    <div className="social-photo-frame">
+                      <Image src={siteAsset(photo.src)} width={photo.width} height={photo.height} alt={photo.alt} sizes="(max-width: 680px) 100vw, (max-width: 1100px) 46vw, 44vw" loading="lazy" unoptimized />
+                    </div>
+                    <figcaption>{photo.caption}</figcaption>
+                  </figure>
+                ))}
               </div>
             </div>
           </section>

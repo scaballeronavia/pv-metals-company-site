@@ -24,7 +24,9 @@ export default function Header() {
         <nav id="primary-nav" className={open ? "primary-nav is-open" : "primary-nav"} aria-label="Navegación principal">
           <a href="#materia" onClick={() => setOpen(false)}>Recorrido</a>
           <a href="#toll" onClick={() => setOpen(false)}>Servicio Toll</a>
+          <a href="#nosotros" onClick={() => setOpen(false)}>Nosotros</a>
           <a href="#productos" onClick={() => setOpen(false)}>Productos</a>
+          <a href="#responsabilidad" onClick={() => setOpen(false)}>Comunidad</a>
           <a href="#contacto" onClick={() => setOpen(false)}>Contacto</a>
         </nav>
         <a className="header-cta" href={siteContact.quote} target="_blank" rel="noopener noreferrer">Solicitar cotización <span aria-hidden="true">↗</span></a>

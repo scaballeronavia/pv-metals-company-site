@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { siteAsset } from "@/lib/site-asset";
 
-const chapterIds = ["inicio", "materia", "transformacion", "toll", "precision", "productos", "contacto"] as const;
-type StoryPosition = { chapter: number; progress: number; total: number };
-const initialPosition: StoryPosition = { chapter: 0, progress: 0, total: 0 };
+const chapterIds = ["inicio", "materia", "transformacion", "toll", "nosotros", "precision", "productos", "responsabilidad", "contacto"] as const;
+type ChapterId = typeof chapterIds[number];
+type StoryPosition = { chapter: ChapterId; progress: number; total: number };
+const initialPosition: StoryPosition = { chapter: "inicio", progress: 0, total: 0 };
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
 export default function StoryScene() {
@@ -38,15 +39,15 @@ export default function StoryScene() {
       if (!story) return;
       const viewport = window.innerHeight;
       const anchor = viewport * 0.5;
-      let chapter = 0;
+      let chapterIndex = 0;
       for (let index = 1; index < chapters.length; index++) {
         const rect = chapters[index]?.getBoundingClientRect();
-        if (rect && rect.top <= anchor) chapter = index;
+        if (rect && rect.top <= anchor) chapterIndex = index;
       }
-      const current = chapters[chapter]?.getBoundingClientRect();
+      const current = chapters[chapterIndex]?.getBoundingClientRect();
       const storyRect = story.getBoundingClientRect();
       const next: StoryPosition = {
-        chapter,
+        chapter: chapterIds[chapterIndex],
         progress: current ? clamp((anchor - current.top) / Math.max(1, current.height)) : 0,
         total: clamp(-storyRect.top / Math.max(1, storyRect.height - viewport)),
       };
@@ -57,7 +58,7 @@ export default function StoryScene() {
     };
     const scheduleScroll = () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScroll); };
     const updatePointer = (event: PointerEvent) => {
-      if (motion.matches || mobile.matches || document.hidden || stage.current?.dataset.storyChapter !== "0") return;
+      if (motion.matches || mobile.matches || document.hidden || stage.current?.dataset.storyChapter !== "inicio") return;
       pointerX = event.clientX / window.innerWidth - 0.5;
       pointerY = event.clientY / window.innerHeight - 0.5;
       if (pointerFrame) return;
@@ -93,27 +94,27 @@ export default function StoryScene() {
   }, []);
 
   const chapter = position.chapter;
-  const heroOpacity = chapter === 0 ? 1 : 0;
+  const heroOpacity = chapter === "inicio" ? 1 : 0;
   const rawBlend = clamp((position.progress - 0.42) / 0.55);
   const chapterBlend = reducedMotion ? 0 : rawBlend * rawBlend * (3 - 2 * rawBlend);
-  const machineTravel = reducedMotion || chapter !== 2 ? 0 : position.progress - 0.5;
+  const machineTravel = reducedMotion || chapter !== "transformacion" ? 0 : position.progress - 0.5;
   const machineTransform = reducedMotion ? "none" : `translate3d(0,${-26 * machineTravel * (compact ? 0.7 : 1)}px,0) rotateY(${8 * machineTravel * (compact ? 0.6 : 1)}deg) scale(1.035)`;
-  const granallaOpacity = chapter === 1 || chapter === 4 || chapter === 5 ? 1 : chapter === 3 ? chapterBlend : 0;
-  const granallaOffset = chapter === 1 ? (reducedMotion ? 18 : 14 + 4 * position.progress) : chapter === 4 ? -30 - 6 * chapterBlend : chapter === 5 ? 0 : -18;
-  const granallaTilt = reducedMotion ? 0 : chapter === 1 ? -3 + 6 * position.progress : chapter === 4 ? -3 + 6 * chapterBlend : chapter === 5 ? 3 + position.progress : -3;
+  const granallaOpacity = chapter === "materia" || chapter === "precision" || chapter === "productos" ? 1 : chapter === "toll" ? chapterBlend : 0;
+  const granallaOffset = chapter === "materia" ? (reducedMotion ? 18 : 14 + 4 * position.progress) : chapter === "precision" ? -30 - 6 * chapterBlend : chapter === "productos" ? 0 : -18;
+  const granallaTilt = reducedMotion ? 0 : chapter === "materia" ? -3 + 6 * position.progress : chapter === "precision" ? -3 + 6 * chapterBlend : chapter === "productos" ? 3 + position.progress : -3;
   const productTravel = reducedMotion ? 0 : position.progress - 0.5;
 
   return (
     <div ref={stage} className="scene-shell" data-story-chapter={chapter}>
       <div className="stage-visual stage-visual-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: heroOpacity }} />
       <div className="stage-visual stage-visual-ingot-empty" style={{ backgroundImage: `url("${siteAsset("/images/ingot-stage-empty.jpg")}")` }} />
-      <div className="stage-visual stage-visual-matter" style={{ opacity: chapter === 1 ? 1 : 0 }} />
-      <div className="stage-visual stage-visual-liquid" style={{ backgroundImage: `url("${siteAsset("/images/granalla-machine-concept.webp")}")`, opacity: chapter === 2 ? 1 : 0, transform: machineTransform }} />
-      <div className="stage-visual stage-visual-industry" style={{ backgroundImage: `url("${siteAsset("/images/industrial-concept.jpg")}")`, opacity: chapter === 3 ? 1 : 0 }} />
-      <div className="stage-visual stage-visual-products" style={{ opacity: chapter === 4 || chapter === 5 ? 1 : 0 }} />
-      {(chapter === 1 || chapter === 3 || chapter === 4 || chapter === 5) && <div key={chapter} className={`stage-visual stage-visual-granalla${chapter === 5 ? " is-product" : ""}${chapter === 3 ? "" : " is-entering"}`} style={{ backgroundImage: `url("${siteAsset("/images/granalla-silver-cutout.webp")}")`, opacity: granallaOpacity, transform: `translate3d(calc(${compact ? 0 : granallaOffset}vw + var(--granalla-pureza-shift, 0vw)),${chapter === 5 ? -18 * productTravel : 0}px,0) rotateY(${compact ? granallaTilt * 0.65 : granallaTilt}deg)` }} />}
-      {chapter === 5 && <div className="stage-product-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand-cutout.webp")}")`, transform: reducedMotion ? "none" : `translate3d(0,${-24 * productTravel}px,0) rotateY(${6 * productTravel}deg)` }} />}
-      <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: chapter === 6 ? 1 : 0 }} />
+      <div className="stage-visual stage-visual-matter" style={{ opacity: chapter === "materia" ? 1 : 0 }} />
+      <div className="stage-visual stage-visual-liquid" style={{ backgroundImage: `url("${siteAsset("/images/granalla-machine-concept.webp")}")`, opacity: chapter === "transformacion" ? 1 : 0, transform: machineTransform }} />
+      <div className="stage-visual stage-visual-industry" style={{ backgroundImage: `url("${siteAsset("/images/industrial-concept.jpg")}")`, opacity: chapter === "toll" ? 1 : 0 }} />
+      <div className="stage-visual stage-visual-products" style={{ opacity: chapter === "precision" || chapter === "productos" ? 1 : 0 }} />
+      {(chapter === "materia" || chapter === "toll" || chapter === "precision" || chapter === "productos") && <div key={chapter} className={`stage-visual stage-visual-granalla${chapter === "productos" ? " is-product" : ""}${chapter === "toll" ? "" : " is-entering"}`} style={{ backgroundImage: `url("${siteAsset("/images/granalla-silver-cutout.webp")}")`, opacity: granallaOpacity, transform: `translate3d(calc(${compact ? 0 : granallaOffset}vw + var(--granalla-pureza-shift, 0vw)),${chapter === "productos" ? -18 * productTravel : 0}px,0) rotateY(${compact ? granallaTilt * 0.65 : granallaTilt}deg)` }} />}
+      {chapter === "productos" && <div className="stage-product-ingot" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand-cutout.webp")}")`, transform: reducedMotion ? "none" : `translate3d(0,${-24 * productTravel}px,0) rotateY(${6 * productTravel}deg)` }} />}
+      <div className="stage-visual stage-visual-contact" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: chapter === "contacto" ? 1 : 0 }} />
       <div className="stage-ingot-cutout" style={{ backgroundImage: `url("${siteAsset("/images/pv-ingot-silver-brand.webp")}")`, opacity: heroOpacity, transform: reducedMotion ? undefined : compact ? "translateX(-50%)" : "translate(-50%,-50%) translate3d(var(--ingot-x, 0px),var(--ingot-y, 0px),60px) rotateY(var(--ingot-tilt, 0deg))" }} />
       <div className="story-progress"><span style={{ transform: `scaleY(${Math.max(position.total, 0.02)})` }} /></div>
       <span className="stage-coordinate">PV / AG / 47</span>
