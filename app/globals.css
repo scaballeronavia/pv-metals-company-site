@@ -180,6 +180,10 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
 .purpose-statement+ .purpose-statement{padding-left:clamp(30px,4vw,70px);border-left:1px solid rgba(225,237,238,.17)}
 .purpose-statement h3{margin:0 0 22px;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;font-size:clamp(31px,3vw,48px);font-weight:800;line-height:1;letter-spacing:-.045em}
 .purpose-statement p{max-width:610px;margin:0;color:#c2ced0;font-size:clamp(16px,1.3vw,20px);line-height:1.65}
+.purpose-statement p+p{margin-top:1.1em}
+.purpose-statement{transition:background-color .35s ease,box-shadow .35s ease}
+.purpose-statement:first-child{background:linear-gradient(90deg,rgba(209,119,61,.045),transparent 68%)}
+.purpose-statement:last-child{background:linear-gradient(90deg,transparent 25%,rgba(199,219,224,.045))}
 .chapter-social{min-height:0;overflow:visible;background-size:auto 100svh}
 .chapter-social::before{background:linear-gradient(180deg,rgba(4,7,8,.56) 0%,rgba(4,7,8,.76) 52svh,#080b0d 100svh)}
 @media(min-width:1100px){.chapter-social{background-size:100% auto}}
@@ -199,8 +203,16 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
 .social-figure-2 .social-photo-frame img{object-position:center top}
 .social-figure-3 .social-photo-frame img{object-position:center center;transform:scale(1.42)}
 .social-figure-4 .social-photo-frame img{object-position:center top}
+.social-figure-5 .social-photo-frame img,.social-figure-6 .social-photo-frame img,.social-figure-7 .social-photo-frame img{width:100%;height:auto;object-fit:contain;transform:none}
 .social-figure figcaption{display:flex;align-items:center;gap:13px;margin-top:16px;color:#d0d9da;font-size:13px;font-weight:600;letter-spacing:.01em}
 .social-figure figcaption::before{flex:none;width:18px;height:1px;background:var(--pv-gold);content:""}
+@media(hover:hover) and (pointer:fine){
+  .purpose-statement:hover{box-shadow:inset 0 1px rgba(255,211,169,.28)}
+  .social-photo-frame{transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s ease,border-color .45s ease}
+  .social-figure:hover .social-photo-frame{transform:translateY(-5px);border-color:rgba(237,214,195,.36);box-shadow:0 36px 85px rgba(0,0,0,.4)}
+  .social-figure:nth-child(-n+4) .social-photo-frame img{transition:scale .6s cubic-bezier(.22,1,.36,1)}
+  .social-figure:nth-child(-n+4):hover .social-photo-frame img{scale:1.025}
+}
 @media(min-width:901px) and (max-width:1080px){.site-header .header-cta{display:none}}
 @media(max-width:900px){.purpose-inner{padding-top:132px}.purpose-heading h2,.social-heading h2{font-size:clamp(56px,7vw,80px)}}
 @media(max-width:680px){

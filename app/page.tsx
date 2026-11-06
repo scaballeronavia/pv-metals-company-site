@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import HeroIngot3D from "@/components/HeroIngot3D";
 import HeroIntroMotion from "@/components/HeroIntroMotion";
 import StoryScene from "@/components/StoryScene";
+import EditorialReveal from "@/components/EditorialReveal";
 import Image from "next/image";
 import { siteAsset } from "@/lib/site-asset";
 import { siteContact } from "@/lib/site-config";
@@ -36,6 +37,9 @@ const socialImages = [
     alt: "Grupo reunido en una actividad comunitaria de fin de año.",
     caption: "Un encuentro colectivo",
   },
+  { src: "/images/social/actividad-comunitaria.jpeg", width: 590, height: 495, alt: "Personas reunidas durante una actividad comunitaria en un espacio interior.", caption: "Actividad comunitaria" },
+  { src: "/images/social/personas-y-comunidad.jpeg", width: 940, height: 788, alt: "Grupo de personas reunidas al aire libre en una actividad compartida.", caption: "Personas y comunidad" },
+  { src: "/images/social/accion-solidaria.jpeg", width: 940, height: 788, alt: "Integrantes de PV Metals junto a materiales destinados a una acción solidaria.", caption: "Acción solidaria" },
 ] as const;
 
 const heroBackdrop = `url("${siteAsset("/images/ingot-stage-empty.jpg")}")`;
@@ -91,19 +95,22 @@ export default function Home() {
           </section>
 
           <section className="chapter chapter-purpose" id="nosotros" aria-labelledby="purpose-title" style={{ backgroundImage: heroBackdrop }}>
+            <EditorialReveal sectionId="nosotros" />
             <div className="chapter-inner purpose-inner">
-              <div className="purpose-heading">
+              <div className="purpose-heading" data-editorial-reveal="0">
                 <p className="section-kicker">Misión y visión</p>
                 <h2 id="purpose-title">La forma de trabajar.<br /><em>La dirección para avanzar.</em></h2>
               </div>
               <div className="purpose-statements">
-                <article className="purpose-statement">
+                <article className="purpose-statement" data-editorial-reveal="1">
                   <h3>Misión</h3>
-                  <p>Refinamos plata en nuestras instalaciones con atención a las necesidades de cada cliente. Ofrecemos granalla, lingotes y servicio Toll con foco en la calidad del producto y del servicio.</p>
+                  <p>Somos una empresa fundidora de plata comprometida con la excelencia en nuestros procesos productivos, garantizando calidad, eficiencia y cumplimiento de estándares técnicos y ambientales.</p>
+                  <p>Trabajamos con responsabilidad, integridad y transparencia, generando valor sostenible para nuestros clientes, colaboradores y la comunidad, a través de una gestión social activa que impulsa el desarrollo humano, deportivo y ambiental.</p>
                 </article>
-                <article className="purpose-statement">
+                <article className="purpose-statement" data-editorial-reveal="2">
                   <h3>Visión</h3>
-                  <p>Aspiramos a fortalecer la presencia de PV Metals Company en los mercados nacional e internacional mediante calidad, capacidad de adaptación e innovación.</p>
+                  <p>Ser una empresa líder y referente en la fundición de plata a nivel nacional e internacional, reconocida por la calidad de nuestros productos, innovación en nuestros procesos y firme compromiso con la responsabilidad social empresarial.</p>
+                  <p>Aspiramos a consolidarnos como una organización sostenible que contribuye al desarrollo integral de la sociedad, apoyando iniciativas sociales, deportivas, educativas y ambientales que generen un impacto positivo y duradero.</p>
                 </article>
               </div>
             </div>
@@ -140,15 +147,16 @@ export default function Home() {
           </section>
 
           <section className="chapter chapter-social" id="responsabilidad" aria-labelledby="social-title" style={{ backgroundImage: heroBackdrop }}>
+            <EditorialReveal sectionId="responsabilidad" />
             <div className="chapter-inner social-inner">
-              <div className="social-heading">
+              <div className="social-heading" data-editorial-reveal="0">
                 <p className="section-kicker">Responsabilidad social</p>
                 <h2 id="social-title">El valor también<br /><em>está en las personas.</em></h2>
                 <p>Momentos compartidos con la comunidad.</p>
               </div>
               <div className="social-gallery" aria-label="Fotografías de actividades comunitarias">
                 {socialImages.map((photo, index) => (
-                  <figure className={`social-figure social-figure-${index + 1}`} key={photo.src}>
+                  <figure className={`social-figure social-figure-${index + 1}`} key={photo.src} data-editorial-reveal={index % 2 ? "2" : "1"}>
                     <div className="social-photo-frame">
                       <Image src={siteAsset(photo.src)} width={photo.width} height={photo.height} alt={photo.alt} sizes="(max-width: 680px) 100vw, (max-width: 1100px) 46vw, 44vw" loading="lazy" unoptimized />
                     </div>
