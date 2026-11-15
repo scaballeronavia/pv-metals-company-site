@@ -33,7 +33,9 @@ export default function HeroIngot3D() {
   const touch = useRef<TouchState | null>(null);
   const [visible, setVisible] = useState(false);
   const [webgl, setWebgl] = useState(false);
+  const [webglChecked, setWebglChecked] = useState(false);
   const [ready, setReady] = useState(false);
+  const [slow, setSlow] = useState(false);
   const [failed, setFailed] = useState(false);
   const [contextLost, setContextLost] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
@@ -59,12 +61,13 @@ export default function HeroIngot3D() {
     const observer = new IntersectionObserver(([entry]) => {
       const inHero = entry.intersectionRatio > 0.5;
       setVisible(inHero);
-      if (!inHero) setReady(false);
+      if (!inHero) { setReady(false); setSlow(false); }
     }, { threshold: 0.5 });
     const hero = document.getElementById("inicio");
     if (hero) observer.observe(hero);
     const detectionFrame = requestAnimationFrame(() => {
       setWebgl(Boolean(window.WebGL2RenderingContext || window.WebGLRenderingContext));
+      setWebglChecked(true);
     });
     return () => {
       cancelAnimationFrame(detectionFrame);
@@ -77,12 +80,12 @@ export default function HeroIngot3D() {
 
   useEffect(() => {
     if (!webgl || !visible || ready || failed || contextLost) return;
-    const timer = window.setTimeout(() => setFailed(true), 12000);
+    const timer = window.setTimeout(() => setSlow(true), 12000);
     return () => window.clearTimeout(timer);
   }, [webgl, visible, ready, failed, contextLost, retryKey]);
 
-  const onReady = useCallback(() => setReady(true), []);
-  const onError = useCallback(() => { setReady(false); setFailed(true); }, []);
+  const onReady = useCallback(() => { setReady(true); setSlow(false); }, []);
+  const onError = useCallback(() => { setReady(false); setSlow(false); setFailed(true); }, []);
   const onContextLost = useCallback(() => { setReady(false); setContextLost(true); }, []);
   const onContextRestored = useCallback(() => {
     setReady(false);
@@ -91,8 +94,10 @@ export default function HeroIngot3D() {
   }, []);
   const retry = () => {
     setReady(false);
+    setSlow(false);
     setFailed(false);
     setContextLost(false);
+    setWebgl(Boolean(window.WebGL2RenderingContext || window.WebGLRenderingContext));
     setRetryKey((current) => current + 1);
   };
 
@@ -173,11 +178,11 @@ export default function HeroIngot3D() {
     event.preventDefault();
   };
 
-  if (!visible || !webgl) return null;
+  if (!visible) return null;
 
   return (
     <>
-      {!failed && (
+      {webgl && !failed && (
         <div
           ref={area}
           className={`hero-ingot-interaction${active ? " hero-ingot-ready" : ""}`}
@@ -210,7 +215,13 @@ export default function HeroIngot3D() {
           )}
         </div>
       )}
-      {(failed || contextLost) && (
+      {slow && !ready && !failed && !contextLost && (
+        <div className="hero-3d-status" role="status">
+          <span>El lingote 3D sigue cargando. La imagen conceptual permanece visible.</span>
+          <button type="button" onClick={retry}>Reintentar carga</button>
+        </div>
+      )}
+      {((webglChecked && !webgl) || failed || contextLost) && (
         <div className="hero-3d-status" role="status">
           <span>Vista 3D no disponible. Se muestra la imagen conceptual.</span>
           <button type="button" onClick={retry}>Reintentar 3D</button>
