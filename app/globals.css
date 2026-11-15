@@ -62,10 +62,17 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
 .site-footer{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:28px clamp(22px,4.2vw,76px);border-top:1px solid var(--line);background:#050708;color:#aebcbe;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.site-footer a:hover{color:var(--orange)}.site-footer .footer-credit{font-size:11px;font-weight:500;letter-spacing:.015em;text-transform:none}.footer-credit a{margin-left:4px;color:#eef3f3;font-weight:700;transition:color .2s}.footer-credit a:hover{color:var(--orange)}
 .footer-visitors{display:inline-flex;align-items:baseline;gap:7px;color:#aebcbe;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:none;white-space:nowrap}
 .footer-visitors strong{color:#f0f4f4;font-size:11px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.footer-social{display:flex;align-items:center;gap:12px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.footer-social-label{color:#aebcbe}
+.footer-social-links{display:flex;align-items:center;gap:8px}
+.footer-social-links a{display:grid;width:40px;height:40px;place-items:center;border:1px solid rgba(174,188,190,.28);border-radius:50%;color:#d5dddd;transition:transform .22s ease,border-color .22s ease,color .22s ease,background-color .22s ease}
+.footer-social-links svg{display:block;width:19px;height:19px}
+@media(hover:hover) and (pointer:fine){.footer-social-links a:hover{transform:translateY(-2px);border-color:var(--pv-gold);background:rgba(247,196,82,.07);color:var(--pv-gold)}}
 .facebook-share-float{position:fixed;z-index:45;top:clamp(105px,25svh,260px);right:max(14px,env(safe-area-inset-right));display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid rgba(224,42,39,.7);border-radius:50%;background:rgba(5,8,9,.9);box-shadow:0 12px 28px rgba(0,0,0,.3);color:#eef3f3;transition:background-color .2s,border-color .2s,color .2s}
 .facebook-share-float:hover{border-color:var(--pv-gold);background:#171d1f;color:var(--pv-gold)}
 .facebook-share-float svg{width:22px;height:22px}
 @media(max-width:680px){.facebook-share-float{top:clamp(88px,23svh,220px);right:max(12px,env(safe-area-inset-right));width:44px;height:44px}.footer-visitors{order:4;width:100%;font-size:10px}.footer-visitors strong{font-size:12px}}
+@media(max-width:680px){.footer-social-links a{width:44px;height:44px}}
 
 @media(max-width:1120px){.header-inner{gap:20px}.brand{min-width:170px}.primary-nav{gap:18px}.chapter-copy,.chapter-hero .chapter-copy{width:min(57%,700px)}.chapter-align-right .chapter-copy{width:min(53%,650px)}h1{font-size:clamp(65px,7.4vw,95px)}}
 @media(max-width:900px){.header-inner{min-height:72px;padding:0 22px}.brand{min-width:0}.brand-mark{font-size:31px}.brand-name{font-size:8px}.header-cta{display:none}.menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:6px;width:44px;height:44px;margin-left:auto;padding:10px;border:1px solid #647177;background:transparent;cursor:pointer}.menu-toggle span{width:100%;height:1px;background:#e7eeee}.primary-nav{position:absolute;top:72px;right:0;left:0;display:none;flex-direction:column;align-items:stretch;gap:6px;margin:0;padding:18px 24px 25px;border-bottom:1px solid var(--line);background:#0d1214}.primary-nav.is-open{display:flex}.primary-nav a{padding:12px 0;font-size:12px}.chapter-copy,.chapter-hero .chapter-copy{width:min(63%,650px)}.chapter-align-right .chapter-copy{width:min(58%,600px)}h1{font-size:clamp(64px,8.7vw,85px)}.chapter h2{font-size:clamp(56px,7vw,80px)}.feature-rule{display:block}.feature-rule span{display:block;margin-top:12px}.purity strong{font-size:clamp(60px,8vw,100px)}}
@@ -233,4 +240,70 @@ h1,.chapter h2{margin:0;color:#f2f5f5;font-family:"Avenir Next Condensed","Arial
   .social-figure:nth-child(even){padding-top:0}
   .social-photo-frame{padding:5px}
   .social-figure figcaption{margin-top:12px;font-size:12px}
+}
+
+/* Footer Premium V3: cuatro columnas y créditos institucionales. */
+.site-footer{display:block;padding:0;background:#050708;color:#c8d1d2;font-size:14px;font-weight:400;letter-spacing:normal;text-transform:none}
+.footer-main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(125px,.72fr) minmax(240px,1.15fr) minmax(150px,.7fr);gap:clamp(28px,4vw,76px);max-width:var(--max);margin:auto;padding:clamp(58px,7vw,105px) clamp(22px,4.2vw,76px)}
+.footer-main>*,.footer-bottom>*{min-width:0}
+.footer-main h2{margin:6px 0 26px;color:#f1f4f4;font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.footer-brand{display:inline-flex;align-items:center;gap:16px;width:fit-content;color:#f1f4f4}
+.footer-brand img{display:block;flex:none;width:58px;height:76px;object-fit:contain}
+.site-footer .footer-brand span{display:block;padding-left:16px;border-left:1px solid rgba(247,196,82,.4);font-family:var(--font-brand);font-size:18px;font-weight:900;line-height:1.12;letter-spacing:.02em}
+.footer-identity p{max-width:430px;margin:24px 0 0;color:#aebcbe;font-size:14px;line-height:1.75}
+.footer-explore ul{display:grid;gap:13px;margin:0;padding:0;list-style:none}
+.footer-explore a{color:#c4cecf;font-size:13px;transition:color .2s ease,text-decoration-color .2s ease;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:5px}
+.footer-explore a:hover{color:var(--pv-gold);text-decoration-color:currentColor}
+.footer-contact address{max-width:320px;margin:0 0 24px;color:#aebcbe;font-size:13px;font-style:normal;line-height:1.65}
+.footer-whatsapp{display:flex;align-items:center;gap:14px;max-width:330px;min-height:76px;padding:14px 17px;border:1px solid rgba(247,196,82,.32);border-radius:7px;background:#111719;box-shadow:0 12px 25px rgba(0,0,0,.16);transition:transform .2s ease,border-color .2s ease,background-color .2s ease}
+.footer-whatsapp:hover{transform:translateY(-2px);border-color:var(--pv-gold);background:#182023}
+.footer-whatsapp>svg{flex:none;width:28px;height:28px;color:var(--pv-gold)}
+.footer-whatsapp>span{display:grid;gap:4px}
+.site-footer .footer-whatsapp>span{display:grid}
+.footer-whatsapp small{color:#b9c6c8;font-size:11px}
+.footer-whatsapp strong{color:#f4f6f6;font-size:15px;font-weight:800}
+.footer-whatsapp strong span{margin-left:8px;color:var(--pv-gold)}
+.footer-contact-note{margin:11px 0 0;color:#9ca9ad;font-size:11px;letter-spacing:.04em}
+.site-footer .footer-social{display:block;white-space:normal;text-transform:none;letter-spacing:normal}
+.footer-social .footer-social-links{gap:10px}
+.footer-social .footer-social-links a{width:44px;height:44px}
+.footer-social p{max-width:180px;margin:22px 0 0;color:#aebcbe;font-size:12px;line-height:1.6}
+.footer-bottom{display:flex;align-items:flex-start;justify-content:space-between;gap:32px;padding:26px clamp(22px,4.2vw,76px) 32px;border-top:1px solid var(--line);max-width:var(--max);margin:auto}
+.footer-legal{display:flex;align-items:center;flex-wrap:wrap;gap:15px 24px;max-width:650px;color:#aebcbe;font-size:11px}
+.footer-legal p{margin:0}
+.footer-legal>a{color:#e4ebeb;font-weight:700}
+.footer-author{display:grid;gap:6px;justify-items:end;text-align:right}
+.footer-author span{color:#aebcbe;font-size:11px}
+.footer-author a{color:#ecf1f1;font-size:12px;font-weight:700;transition:color .2s ease,text-decoration-color .2s ease;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px}
+.footer-author a:hover{color:var(--pv-gold);text-decoration-color:currentColor}
+.footer-author a:last-child{color:var(--pv-gold);font-size:11px;font-weight:800;letter-spacing:.13em}
+@media(max-width:1050px){.footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:54px 44px}.footer-bottom{flex-wrap:wrap}}
+@media(max-width:680px){.footer-main{grid-template-columns:1fr;gap:48px;padding-top:62px;padding-bottom:60px}.footer-brand img{width:52px;height:68px}.site-footer .footer-brand span{display:block;font-size:16px}.footer-identity p{font-size:14px}.footer-main h2{margin-bottom:20px}.footer-social p{max-width:none;margin-top:14px}.footer-bottom{display:grid;gap:28px;padding-top:26px}.footer-legal{display:grid;gap:12px}.footer-author{justify-items:start;text-align:left}.footer-author a{font-size:13px}}
+
+/* Pulido comercial: una secuencia real de Toll y una lectura móvil más breve. */
+.chapter-hero .hero-description strong{color:#f2f6f6;font-weight:750}
+.chapter-toll{overflow:visible}
+.toll-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:32px 0 0;padding:0;list-style:none}
+.toll-flow li{min-width:0;padding:13px 0 0;border-top:1px solid rgba(216,231,231,.32)}
+.toll-flow li::before{display:block;width:19px;height:2px;margin:-15px 0 13px;background:var(--pv-gold);content:""}
+.toll-flow span,.toll-flow strong{display:block}
+.toll-flow span{color:#aebcbe;font-size:11px;font-weight:700;line-height:1.35}
+.toll-flow strong{margin-top:6px;color:#ecf2f2;font-size:13px;font-weight:650;line-height:1.4}
+.chapter-toll .feature-rule{margin-top:28px}
+.chapter-toll .text-link{margin-top:24px}
+.chapter-facts .purity p,.chapter-products .line-list dd{color:#d0dada}
+@media(max-width:680px){
+  .chapter-hero .hero-description{max-width:440px;line-height:1.6}
+  .chapter-toll .chapter-copy{padding-top:clamp(125px,22svh,190px)}
+  .toll-flow{grid-template-columns:1fr;gap:0;margin-top:23px}
+  .toll-flow li{display:grid;grid-template-columns:minmax(78px,.42fr) minmax(0,1fr);align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+  .toll-flow li::before{display:none}
+  .toll-flow strong{margin:0;font-size:12px}
+  .footer-main{gap:38px}
+  .footer-explore ul{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;row-gap:0}
+  .footer-explore a{display:flex;align-items:center;min-height:44px;line-height:1.35}
+}
+@media(max-width:350px){
+  .toll-flow{padding-right:42px}
+  .toll-flow li{grid-template-columns:1fr;gap:2px}
 }

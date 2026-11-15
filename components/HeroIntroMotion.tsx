@@ -14,7 +14,7 @@ export default function HeroIntroMotion({ quoteLink }: HeroIntroMotionProps) {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <h1 id="hero-title">La plata<br />toma forma<span className="period">.</span></h1>
-        <p className="hero-description">Refinación especializada de plata. Lingotes, granalla y servicio Toll para concentrado de óxido de plata.</p>
+        <p className="hero-description"><strong>Refinación especializada de plata.</strong> Lingotes, granalla y servicio Toll para concentrado de óxido de plata.</p>
         <div className="hero-actions">
           <a className="button-primary" href={quoteLink} target="_blank" rel="noopener noreferrer">Solicitar cotización <span aria-hidden="true">↗</span></a>
           <a className="button-secondary" href="#productos">Ver productos</a>

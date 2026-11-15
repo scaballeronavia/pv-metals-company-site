@@ -88,6 +88,11 @@ export default function Home() {
               <div className="chapter-copy">
                 <h2 id="toll-title">Realizamos<br /><em>Refinado de Plata</em></h2>
                 <p className="chapter-lead">en nuestras instalaciones con materia prima de nuestros clientes (servicio Toll).</p>
+                <ol className="toll-flow" aria-label="Cómo funciona el servicio Toll">
+                  <li><span>Materia prima</span><strong>Concentrado de óxido de plata del cliente</strong></li>
+                  <li><span>Refinación</span><strong>En nuestras instalaciones</strong></li>
+                  <li><span>Resultado</span><strong>Plata refinada</strong></li>
+                </ol>
                 <div className="feature-rule"><strong>6–10 días</strong><span>Tiempo estimado, dependiendo de la ley del concentrado.</span></div>
                 <a className="text-link" href={siteContact.toll} target="_blank" rel="noopener noreferrer">Consultar servicio Toll <span aria-hidden="true">↗</span></a>
               </div>
