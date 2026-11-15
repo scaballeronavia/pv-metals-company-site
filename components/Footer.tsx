@@ -46,7 +46,8 @@ export default function Footer() {
               <a href={socialLinks.facebookProfile} target="_blank" rel="noopener noreferrer" aria-label="Facebook de PV Metals Company">
                 <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M13.5 21v-7.4H16l.4-2.9h-2.9V8.8c0-.8.2-1.4 1.5-1.4h1.5V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.1H7.9v2.9h2.5V21h3.1Z" fill="currentColor" /></svg>
               </a>
-              {socialLinks.instagramProfile ? <a href={socialLinks.instagramProfile} target="_blank" rel="noopener noreferrer" aria-label="Instagram de PV Metals Company"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="17.5" cy="6.7" r="1" fill="currentColor" /></svg></a> : null}
+              <a href={socialLinks.instagramProfile} target="_blank" rel="noopener noreferrer" aria-label="Instagram de PV Metals Company"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="17.5" cy="6.7" r="1" fill="currentColor" /></svg></a>
+              <a href={socialLinks.tiktokProfile} target="_blank" rel="noopener noreferrer" aria-label="TikTok de PV Metals Company"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M16.6 2c.2 2.1 1.4 3.4 3.4 3.5v3.1a8.5 8.5 0 0 1-3.4-.8v6.4a6.2 6.2 0 1 1-6.2-6.2c.4 0 .8 0 1.2.1v3.2a3 3 0 1 0 1.8 2.9V2h3.2Z" /></svg></a>
             </div>
             <p>Conoce más sobre nuestra empresa.</p>
           </nav>

@@ -18,6 +18,7 @@ export const siteContact = {
 
 export const socialLinks = {
   facebookProfile: "https://www.facebook.com/profile.php?id=100094143918685",
-  instagramProfile: null as string | null,
+  instagramProfile: "https://www.instagram.com/pv_metals_company?mdxt=MWQ0azRvNGkyMGxqbQ==",
+  tiktokProfile: "https://www.tiktok.com/@pvmetalscompany?_r=1&_t=ZS-9BQhTfuuWsW",
   facebookShare: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}`,
 } as const;
